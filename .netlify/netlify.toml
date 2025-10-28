@@ -1,5 +1,5 @@
 functionsDirectory = "/workspace/netlify/functions"
-functionsDirectoryOrigin = "default"
+functionsDirectoryOrigin = "config"
 headersOrigin = "config"
 redirectsOrigin = "config"
 plugins = []
@@ -8,10 +8,11 @@ plugins = []
 publish = "/workspace/dist"
 publishOrigin = "config"
 commandOrigin = "config"
-command = "npm run build"
+command = "npm install && npm run build"
 functions = "/workspace/netlify/functions"
 
 [build.environment]
+NODE_VERSION = "20"
 
 [build.processing]
 
@@ -28,6 +29,7 @@ functions = "/workspace/netlify/functions"
 [functions]
 
 [functions."*"]
+node_bundler = "esbuild"
 
 [[headers]]
 for = "/*"
