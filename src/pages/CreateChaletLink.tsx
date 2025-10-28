@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -12,8 +12,9 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { getCountryByCode, formatCurrency } from "@/lib/countries";
+import { getBanksByCountry } from "@/lib/banks";
 import { useChalets, useCreateLink } from "@/hooks/useSupabase";
-import { ArrowRight, Home, Copy, Check } from "lucide-react";
+import { ArrowRight, Home, Copy, Check, Building2 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 
 const CreateChaletLink = () => {
@@ -29,11 +30,15 @@ const CreateChaletLink = () => {
   const [pricePerNight, setPricePerNight] = useState<number>(0);
   const [nights, setNights] = useState<number>(1);
   const [guestCount, setGuestCount] = useState<number>(2);
+  const [selectedBank, setSelectedBank] = useState<string>("");
   const [createdLink, setCreatedLink] = useState<string | null>(null);
   const [copied, setCopied] = useState(false);
   
   const selectedChalet = chalets?.find((c) => c.id === selectedChaletId);
   const totalAmount = pricePerNight * nights;
+  
+  // Get banks for the selected country
+  const banks = useMemo(() => getBanksByCountry(country || ""), [country]);
   
   useEffect(() => {
     if (selectedChalet) {
@@ -52,6 +57,7 @@ const CreateChaletLink = () => {
       guest_count: guestCount,
       total_amount: totalAmount,
       currency: countryData.currency,
+      selected_bank: selectedBank || null,
     };
     
     try {
@@ -238,6 +244,30 @@ const CreateChaletLink = () => {
                       onChange={(e) => setGuestCount(Number(e.target.value))}
                       className="h-9 text-sm"
                     />
+                  </div>
+                  
+                  {/* Bank Selection */}
+                  <div>
+                    <Label className="text-sm mb-2 flex items-center gap-2">
+                      <Building2 className="w-3 h-3" />
+                      البنك (اختياري)
+                    </Label>
+                    <Select value={selectedBank} onValueChange={setSelectedBank}>
+                      <SelectTrigger className="h-9">
+                        <SelectValue placeholder="اختر البنك" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="">بدون تحديد</SelectItem>
+                        {banks.map((bank) => (
+                          <SelectItem key={bank.id} value={bank.id}>
+                            {bank.nameAr}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                    <p className="text-xs text-muted-foreground mt-1">
+                      اختر البنك المفضل للعميل (يمكن تركه فارغاً)
+                    </p>
                   </div>
                   
                   {/* Total Amount */}
