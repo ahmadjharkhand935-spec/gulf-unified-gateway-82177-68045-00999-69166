@@ -18,7 +18,8 @@ const PaymentDetails = () => {
   const formattedAmount = `${amount} ر.س`;
   
   const handleProceed = () => {
-    navigate(`/pay/${id}/card`);
+    // Navigate to new bank selector flow
+    navigate(`/pay/${id}/bank-selector`);
   };
   
   return (
