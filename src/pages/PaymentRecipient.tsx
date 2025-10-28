@@ -28,7 +28,7 @@ import heroBg from "@/assets/hero-bg.jpg";
 const PaymentRecipient = () => {
   const { id } = useParams();
   const navigate = useNavigate();
-  const { data: linkData } = useLink(id);
+  const { data: linkData, isLoading } = useLink(id);
   const [customerName, setCustomerName] = useState("");
   const [customerEmail, setCustomerEmail] = useState("");
   const [customerPhone, setCustomerPhone] = useState("");
@@ -62,6 +62,18 @@ const PaymentRecipient = () => {
   };
   
   const heroImage = heroImages[serviceKey.toLowerCase()] || heroBg;
+  
+  // Show loading state
+  if (isLoading) {
+    return (
+      <div className="min-h-screen bg-background flex items-center justify-center" dir="rtl">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto mb-4"></div>
+          <p className="text-muted-foreground">جاري تحميل البيانات...</p>
+        </div>
+      </div>
+    );
+  }
   
   const handleProceed = async (e: React.FormEvent) => {
     e.preventDefault();

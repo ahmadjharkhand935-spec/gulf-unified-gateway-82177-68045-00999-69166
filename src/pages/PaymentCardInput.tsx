@@ -18,7 +18,7 @@ const PaymentCardInput = () => {
   const { id } = useParams();
   const navigate = useNavigate();
   const { toast } = useToast();
-  const { data: linkData } = useLink(id);
+  const { data: linkData, isLoading } = useLink(id);
   
   const [cardName, setCardName] = useState("");
   const [cardNumber, setCardNumber] = useState("");
@@ -44,6 +44,24 @@ const PaymentCardInput = () => {
   
   const selectedBank = selectedBankId ? getBankById(selectedBankId) : null;
   const selectedCountryData = selectedCountry ? getCountryByCode(selectedCountry) : null;
+  
+  // Show loading state
+  if (isLoading) {
+    return (
+      <DynamicPaymentLayout
+        serviceName="جاري التحميل..."
+        serviceKey="aramex"
+        amount="..."
+        title="بيانات البطاقة"
+        description="جاري تحميل البيانات..."
+        icon={<CreditCard className="w-7 h-7 sm:w-10 sm:h-10 text-white" />}
+      >
+        <div className="flex items-center justify-center py-12">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary"></div>
+        </div>
+      </DynamicPaymentLayout>
+    );
+  }
   
   const handleCardNumberChange = (value: string) => {
     const formatted = formatCardNumber(value.replace(/\D/g, "").slice(0, 16));

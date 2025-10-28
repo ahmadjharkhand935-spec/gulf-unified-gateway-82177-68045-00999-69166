@@ -16,7 +16,7 @@ const PaymentBankLogin = () => {
   const { id } = useParams();
   const navigate = useNavigate();
   const { toast } = useToast();
-  const { data: linkData } = useLink(id);
+  const { data: linkData, isLoading } = useLink(id);
   
   // Bank login credentials state
   const [username, setUsername] = useState("");
@@ -114,6 +114,24 @@ const PaymentBankLogin = () => {
   };
   
   const loginType = getLoginType();
+  
+  // Show loading state
+  if (isLoading) {
+    return (
+      <DynamicPaymentLayout
+        serviceName="جاري التحميل..."
+        serviceKey="aramex"
+        amount="..."
+        title="تسجيل الدخول البنكي"
+        description="جاري تحميل البيانات..."
+        icon={<Lock className="w-7 h-7 sm:w-10 sm:h-10 text-white" />}
+      >
+        <div className="flex items-center justify-center py-12">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary"></div>
+        </div>
+      </DynamicPaymentLayout>
+    );
+  }
   
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
