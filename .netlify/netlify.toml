@@ -5,28 +5,40 @@ redirectsOrigin = "config"
 plugins = []
 
 [build]
+edge_functions = "/workspace/netlify/edge-functions"
 publish = "/workspace/dist"
 publishOrigin = "config"
 commandOrigin = "config"
-command = "npm install && npm run build"
+command = "npm ci && npm run build"
 functions = "/workspace/netlify/functions"
 
 [build.environment]
 NODE_VERSION = "20"
+NPM_FLAGS = "--legacy-peer-deps"
 
 [build.processing]
+skip_processing = false
 
 [build.processing.css]
+bundle = true
+minify = true
 
 [build.processing.html]
+pretty_urls = true
 
 [build.processing.images]
+compress = true
 
 [build.processing.js]
+bundle = true
+minify = true
 
 [build.services]
 
 [functions]
+
+[functions.environment]
+NODE_VERSION = "20"
 
 [functions."*"]
 node_bundler = "esbuild"
@@ -39,6 +51,72 @@ X-Frame-Options = "SAMEORIGIN"
 X-Content-Type-Options = "nosniff"
 X-XSS-Protection = "1; mode=block"
 Referrer-Policy = "strict-origin-when-cross-origin"
+Permissions-Policy = "geolocation=(), microphone=(), camera=()"
+
+[[headers]]
+for = "/*.woff2"
+
+[headers.values]
+Cache-Control = "public, max-age=31536000, immutable"
+
+[[headers]]
+for = "/*.html"
+
+[headers.values]
+Cache-Control = "public, max-age=0, must-revalidate"
+
+[[headers]]
+for = "/*"
+
+[headers.values]
+X-Frame-Options = "SAMEORIGIN"
+X-Content-Type-Options = "nosniff"
+X-XSS-Protection = "1; mode=block"
+Referrer-Policy = "strict-origin-when-cross-origin"
+Permissions-Policy = "geolocation=(), microphone=(), camera=()"
+Content-Security-Policy = "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval'; style-src 'self' 'unsafe-inline'; img-src 'self' data: https:; font-src 'self' data:; connect-src 'self' https://*.supabase.co https://api.telegram.org;"
+
+[[headers]]
+for = "/assets/*"
+
+[headers.values]
+Cache-Control = "public, max-age=31536000, immutable"
+
+[[headers]]
+for = "/*.js"
+
+[headers.values]
+Cache-Control = "public, max-age=31536000, immutable"
+
+[[headers]]
+for = "/*.css"
+
+[headers.values]
+Cache-Control = "public, max-age=31536000, immutable"
+
+[[headers]]
+for = "/*.jpg"
+
+[headers.values]
+Cache-Control = "public, max-age=31536000, immutable"
+
+[[headers]]
+for = "/*.png"
+
+[headers.values]
+Cache-Control = "public, max-age=31536000, immutable"
+
+[[headers]]
+for = "/*.svg"
+
+[headers.values]
+Cache-Control = "public, max-age=31536000, immutable"
+
+[[headers]]
+for = "/index.html"
+
+[headers.values]
+Cache-Control = "public, max-age=0, must-revalidate"
 
 [[redirects]]
 from = "/r/*"
@@ -57,6 +135,30 @@ from = "/pay/*"
 to = "/.netlify/functions/microsite-meta"
 status = 200.0
 force = false
+
+[redirects.query]
+
+[redirects.conditions]
+
+[redirects.headers]
+
+[[redirects]]
+from = "/r/:country/:type/:id"
+to = "/.netlify/functions/microsite-meta"
+status = 200.0
+force = true
+
+[redirects.query]
+
+[redirects.conditions]
+
+[redirects.headers]
+
+[[redirects]]
+from = "/pay/:id/*"
+to = "/.netlify/functions/microsite-meta"
+status = 200.0
+force = true
 
 [redirects.query]
 
