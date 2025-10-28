@@ -156,7 +156,7 @@ exports.handler = async (event, context) => {
     }
   }
   
-  const country = countryData[countryCode];
+  let country = countryData[countryCode];
   
   if (!country) {
     return {
