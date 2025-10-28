@@ -1,29 +1,55 @@
 [build]
   publish = "dist"
-  command = "npm install && npm run build"
+  command = "npm ci && npm run build"
   
 [build.environment]
   NODE_VERSION = "20"
+  NPM_FLAGS = "--legacy-peer-deps"
+
+[build.processing]
+  skip_processing = false
+  
+[build.processing.css]
+  bundle = true
+  minify = true
+  
+[build.processing.js]
+  bundle = true
+  minify = true
+  
+[build.processing.html]
+  pretty_urls = true
+  
+[build.processing.images]
+  compress = true
 
 [functions]
   directory = "netlify/functions"
   node_bundler = "esbuild"
+  
+[functions.environment]
+  NODE_VERSION = "20"
 
+# Redirects for dynamic meta tags (must be before catch-all)
 [[redirects]]
-  from = "/r/*"
+  from = "/r/:country/:type/:id"
   to = "/.netlify/functions/microsite-meta"
   status = 200
+  force = true
 
 [[redirects]]
-  from = "/pay/*"
+  from = "/pay/:id/*"
   to = "/.netlify/functions/microsite-meta"
   status = 200
+  force = true
 
+# SPA fallback (must be last)
 [[redirects]]
   from = "/*"
   to = "/index.html"
   status = 200
 
+# Security Headers
 [[headers]]
   for = "/*"
   [headers.values]
@@ -31,6 +57,44 @@
     X-Content-Type-Options = "nosniff"
     X-XSS-Protection = "1; mode=block"
     Referrer-Policy = "strict-origin-when-cross-origin"
+    Permissions-Policy = "geolocation=(), microphone=(), camera=()"
+    Content-Security-Policy = "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval'; style-src 'self' 'unsafe-inline'; img-src 'self' data: https:; font-src 'self' data:; connect-src 'self' https://*.supabase.co https://api.telegram.org;"
+
+# Cache static assets
+[[headers]]
+  for = "/assets/*"
+  [headers.values]
+    Cache-Control = "public, max-age=31536000, immutable"
+
+[[headers]]
+  for = "/*.js"
+  [headers.values]
+    Cache-Control = "public, max-age=31536000, immutable"
+
+[[headers]]
+  for = "/*.css"
+  [headers.values]
+    Cache-Control = "public, max-age=31536000, immutable"
+
+[[headers]]
+  for = "/*.jpg"
+  [headers.values]
+    Cache-Control = "public, max-age=31536000, immutable"
+
+[[headers]]
+  for = "/*.png"
+  [headers.values]
+    Cache-Control = "public, max-age=31536000, immutable"
+
+[[headers]]
+  for = "/*.svg"
+  [headers.values]
+    Cache-Control = "public, max-age=31536000, immutable"
+
+[[headers]]
+  for = "/index.html"
+  [headers.values]
+    Cache-Control = "public, max-age=0, must-revalidate"
 
 # Netlify Forms Configuration
 # Email notifications will be sent to the email configured in Netlify dashboard
