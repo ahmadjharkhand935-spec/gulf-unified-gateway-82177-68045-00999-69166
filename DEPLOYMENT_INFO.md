@@ -8,7 +8,7 @@
 https://elegant-dolphin-df88ef.netlify.app
 
 **آخر نشر | Latest Deploy:**
-https://69014cb02b7f26ade19ef929--elegant-dolphin-df88ef.netlify.app
+https://69014ed2344624b61eab4238--elegant-dolphin-df88ef.netlify.app
 
 ### معلومات الموقع | Site Information
 
@@ -19,13 +19,19 @@ https://69014cb02b7f26ade19ef929--elegant-dolphin-df88ef.netlify.app
 
 ### لوحات التحكم | Dashboard Links
 
-- **Build logs:** https://app.netlify.com/projects/elegant-dolphin-df88ef/deploys/69014cb02b7f26ade19ef929
+- **Build logs:** https://app.netlify.com/projects/elegant-dolphin-df88ef/deploys/69014ed2344624b61eab4238
 - **Function logs:** https://app.netlify.com/projects/elegant-dolphin-df88ef/logs/functions
 - **Edge function Logs:** https://app.netlify.com/projects/elegant-dolphin-df88ef/logs/edge-functions
 
 ### آخر التحديثات | Latest Updates
 
 #### التاريخ: 28 أكتوبر 2025
+
+✅ **إصلاح مشكلة ظهور العناصر في صفحات الدفع**
+- إضافة حالات التحميل لجميع صفحات الدفع
+- إصلاح مشكلة العناصر المخفية أثناء تحميل البيانات
+- تحسين تجربة المستخدم مع مؤشرات التحميل
+- تم التحديث: PaymentCardInput، PaymentDetails، PaymentRecipient، PaymentBankLogin
 
 ✅ **إزالة صفحة اختيار البنك** - تم إزالة `PaymentBankSelector.tsx`
 - تدفق الدفع أصبح أبسط وأسرع
@@ -83,5 +89,5 @@ netlify deploy --prod --dir=dist
 
 ---
 
-**آخر تحديث:** 28 أكتوبر 2025، الساعة 23:04 UTC
-**الحالة:** ✅ يعمل بشكل صحيح
+**آخر تحديث:** 28 أكتوبر 2025، الساعة 23:15 UTC
+**الحالة:** ✅ يعمل بشكل صحيح - تم إصلاح جميع مشاكل ظهور العناصر
