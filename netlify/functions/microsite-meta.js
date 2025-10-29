@@ -132,7 +132,11 @@ async function getLinkData(linkId) {
 }
 
 exports.handler = async (event, context) => {
-  const { path, queryStringParameters } = event;
+  const { path, queryStringParameters, headers } = event;
+  
+  // Check if this is a bot/crawler requesting meta tags
+  const userAgent = headers['user-agent'] || '';
+  const isBot = /bot|crawler|spider|crawling|facebook|twitter|whatsapp|telegram|slack/i.test(userAgent);
   
   // Extract parameters from path: /r/:country/:type/:id or /pay/:id/...
   let pathMatch = path.match(/^\/r\/([A-Z]{2})\/(shipping|chalet)\/([a-zA-Z0-9-]+)$/);
@@ -149,6 +153,7 @@ exports.handler = async (event, context) => {
       type = 'shipping'; // Default to shipping for payment pages
       countryCode = 'SA'; // Default country, will be overridden by link data
     } else {
+      // Not a path we handle, return 404
       return {
         statusCode: 404,
         body: 'Not Found'
@@ -158,7 +163,7 @@ exports.handler = async (event, context) => {
   
   const country = countryData[countryCode];
   
-  if (!country) {
+  if (!country && !pathMatch[1]) {
     return {
       statusCode: 404,
       body: 'Country not found'
@@ -171,10 +176,6 @@ exports.handler = async (event, context) => {
   // For payment pages, get country and type from link data if available
   if (linkData?.country_code) {
     countryCode = linkData.country_code;
-    const linkCountry = countryData[countryCode];
-    if (linkCountry) {
-      country = linkCountry;
-    }
   }
   
   if (linkData?.type) {
@@ -182,6 +183,8 @@ exports.handler = async (event, context) => {
   }
   
   // Debug logging
+  console.log('User Agent:', userAgent);
+  console.log('Is Bot:', isBot);
   console.log('Link ID:', id);
   console.log('Link Data:', linkData);
   console.log('Query Parameters:', queryStringParameters);
@@ -230,6 +233,7 @@ exports.handler = async (event, context) => {
       description += ` - مبلغ الدفع: ${linkData.payload.cod_amount} ر.س`;
     }
   } else if (type === "chalet") {
+    const country = countryData[countryCode] || { nameAr: 'الخليج' };
     const chaletName = linkData?.payload?.chalet_name || 'شاليه';
     const isPaymentPage = path.startsWith('/pay/');
     const pageType = isPaymentPage ? 'دفع حجز شاليه' : 'حجز شاليه';
@@ -252,20 +256,15 @@ exports.handler = async (event, context) => {
   // Final debug logging
   console.log('Final meta tags:', { title, description, ogImage, serviceKey });
   
-  // Generate HTML with proper meta tags
-  const html = `<!DOCTYPE html>
+  // If it's a bot, serve a simple HTML with meta tags for crawlers
+  if (isBot) {
+    const html = `<!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <meta name="theme-color" content="#0EA5E9" />
-  
-  <!-- Basic Meta Tags -->
   <title>${title}</title>
   <meta name="description" content="${description}" />
-  <meta name="author" content="منصة الشحن الذكية" />
-  
-  <!-- Open Graph / Facebook / WhatsApp -->
   <meta property="og:type" content="website" />
   <meta property="og:url" content="${fullUrl}" />
   <meta property="og:title" content="${title}" />
@@ -274,89 +273,44 @@ exports.handler = async (event, context) => {
   <meta property="og:image:width" content="1200" />
   <meta property="og:image:height" content="630" />
   <meta property="og:image:type" content="image/jpeg" />
-  <meta property="og:site_name" content="نظام الدفع الآمن" />
-  <meta property="og:locale" content="ar_AR" />
-  
-  <!-- Twitter Card -->
   <meta name="twitter:card" content="summary_large_image" />
-  <meta name="twitter:url" content="${fullUrl}" />
   <meta name="twitter:title" content="${title}" />
   <meta name="twitter:description" content="${description}" />
   <meta name="twitter:image" content="${fullOgImage}" />
-  <meta name="twitter:image:alt" content="${title}" />
-  
-  <!-- Additional SEO -->
-  <meta name="robots" content="index, follow" />
-  <meta name="language" content="Arabic" />
-  <link rel="canonical" href="${fullUrl}" />
-  
-  <!-- Fonts -->
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Almarai:wght@300;400;700;800&display=swap" rel="stylesheet">
-  
-  <style>
-    body {
-      font-family: 'Almarai', sans-serif;
-      margin: 0;
-      padding: 0;
-      background: linear-gradient(135deg, #0EA5E9, #06B6D4);
-      color: white;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      height: 100vh;
-      text-align: center;
-    }
-    .loading {
-      animation: pulse 2s infinite;
-    }
-    @keyframes pulse {
-      0%, 100% { opacity: 1; }
-      50% { opacity: 0.5; }
-    }
-    .meta-info {
-      background: rgba(255, 255, 255, 0.1);
-      padding: 20px;
-      border-radius: 10px;
-      margin: 20px;
-      backdrop-filter: blur(10px);
-    }
-  </style>
 </head>
 <body>
-  <div class="loading">
-    <div class="meta-info">
-      <h1 style="font-size: 2rem; margin-bottom: 1rem;">${title}</h1>
-      <p style="font-size: 1.2rem; margin-bottom: 1rem;">${description}</p>
-      <p style="font-size: 0.9rem; opacity: 0.8;">جاري التحميل...</p>
-    </div>
-  </div>
-  
-  <script>
-    // Redirect to actual app after a short delay
-    setTimeout(() => {
-      // For payment pages, redirect to the actual React app
-      if ('${path}'.startsWith('/pay/')) {
-        window.location.href = '${fullUrl}';
-      } else {
-        // For microsite pages, redirect to the actual React app
-        window.location.href = '${fullUrl}';
-      }
-    }, 2000);
-  </script>
+  <h1>${title}</h1>
+  <p>${description}</p>
 </body>
 </html>`;
-
+    
+    return {
+      statusCode: 200,
+      headers: {
+        'Content-Type': 'text/html; charset=utf-8',
+        'Cache-Control': 'public, max-age=3600'
+      },
+      body: html
+    };
+  }
+  
+  // For regular users, we need to serve the React app but can't easily modify index.html here
+  // So we'll just pass through to the SPA by returning a redirect
+  // The SPA will handle the routing and display the correct page
   return {
     statusCode: 200,
     headers: {
       'Content-Type': 'text/html; charset=utf-8',
-      'Cache-Control': 'no-cache, no-store, must-revalidate',
-      'Pragma': 'no-cache',
-      'Expires': '0',
-      'X-Robots-Tag': 'noindex, nofollow'
+      'X-Robots-Tag': 'noindex'
     },
-    body: html
+    body: `<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8" />
+  <meta http-equiv="refresh" content="0;url=/" />
+  <script>window.location.href = "/";</script>
+</head>
+<body></body>
+</html>`
   };
 };
