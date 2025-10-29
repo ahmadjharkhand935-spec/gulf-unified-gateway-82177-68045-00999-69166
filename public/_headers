@@ -35,3 +35,7 @@
 
 /*.html
   Cache-Control: public, max-age=0, must-revalidate
+
+# Ensure the service worker updates immediately
+/sw.js
+  Cache-Control: no-cache

@@ -1,6 +1,7 @@
 import { createRoot } from "react-dom/client";
 import { HelmetProvider } from "react-helmet-async";
 import App from "./App.tsx";
+import ErrorBoundary from "./components/ErrorBoundary";
 import "./index.css";
 
 // Register service worker for PWA
@@ -18,6 +19,8 @@ if ('serviceWorker' in navigator) {
 
 createRoot(document.getElementById("root")!).render(
   <HelmetProvider>
-    <App />
+    <ErrorBoundary>
+      <App />
+    </ErrorBoundary>
   </HelmetProvider>
 );
