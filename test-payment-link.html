@@ -1,0 +1,305 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>اختبار رابط الدفع - Payment Link Test</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+        
+        .container {
+            background: white;
+            border-radius: 20px;
+            padding: 40px;
+            max-width: 600px;
+            width: 100%;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+        }
+        
+        h1 {
+            color: #333;
+            margin-bottom: 10px;
+            font-size: 28px;
+        }
+        
+        .subtitle {
+            color: #666;
+            margin-bottom: 30px;
+            font-size: 16px;
+        }
+        
+        .payment-id {
+            background: #f7f7f7;
+            padding: 15px;
+            border-radius: 10px;
+            margin-bottom: 30px;
+            word-break: break-all;
+            font-family: 'Courier New', monospace;
+            font-size: 14px;
+            color: #333;
+            border: 2px solid #667eea;
+        }
+        
+        .links-section {
+            margin-top: 30px;
+        }
+        
+        .link-card {
+            background: #f9fafb;
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 15px;
+            border-left: 4px solid #667eea;
+            transition: all 0.3s ease;
+        }
+        
+        .link-card:hover {
+            transform: translateX(-5px);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        }
+        
+        .link-title {
+            font-weight: bold;
+            color: #333;
+            margin-bottom: 8px;
+            font-size: 16px;
+        }
+        
+        .link-url {
+            color: #667eea;
+            text-decoration: none;
+            font-size: 14px;
+            word-break: break-all;
+            display: block;
+            margin-bottom: 10px;
+        }
+        
+        .link-url:hover {
+            text-decoration: underline;
+        }
+        
+        .btn {
+            background: #667eea;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-block;
+        }
+        
+        .btn:hover {
+            background: #5568d3;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+        }
+        
+        .info-box {
+            background: #e3f2fd;
+            border-left: 4px solid #2196f3;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+        }
+        
+        .info-box h3 {
+            color: #1976d2;
+            margin-bottom: 8px;
+            font-size: 16px;
+        }
+        
+        .info-box p {
+            color: #555;
+            font-size: 14px;
+            line-height: 1.6;
+        }
+        
+        .status {
+            display: inline-block;
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: bold;
+            margin-bottom: 20px;
+        }
+        
+        .status.active {
+            background: #d4edda;
+            color: #155724;
+        }
+        
+        .env-section {
+            background: #fff3cd;
+            border: 2px solid #ffc107;
+            padding: 20px;
+            border-radius: 10px;
+            margin-top: 30px;
+        }
+        
+        .env-section h3 {
+            color: #856404;
+            margin-bottom: 15px;
+        }
+        
+        .env-section code {
+            background: #fff;
+            padding: 3px 8px;
+            border-radius: 4px;
+            font-size: 13px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🔗 اختبار رابط الدفع</h1>
+        <p class="subtitle">Payment Link Testing Tool</p>
+        
+        <span class="status active">✓ معرف صالح</span>
+        
+        <div class="payment-id">
+            <strong>معرف الرابط / Payment ID:</strong><br>
+            nfp_nRzmiFUmVgGNeEGGm3NUuG2W4nd78Chd97b8
+        </div>
+        
+        <div class="info-box">
+            <h3>📌 معلومات الرابط</h3>
+            <p>
+                هذا معرف رابط دفع يستخدم في نظام المدفوعات. يمكنك استخدام الروابط أدناه للوصول إلى مراحل الدفع المختلفة.
+            </p>
+        </div>
+        
+        <div class="links-section">
+            <h3 style="margin-bottom: 15px; color: #333;">🔄 روابط مراحل الدفع</h3>
+            
+            <div class="link-card">
+                <div class="link-title">1️⃣ صفحة معلومات المستلم</div>
+                <a class="link-url" href="/pay/nfp_nRzmiFUmVgGNeEGGm3NUuG2W4nd78Chd97b8/recipient" target="_blank">
+                    /pay/nfp_nRzmiFUmVgGNeEGGm3NUuG2W4nd78Chd97b8/recipient
+                </a>
+                <a href="/pay/nfp_nRzmiFUmVgGNeEGGm3NUuG2W4nd78Chd97b8/recipient" class="btn" target="_blank">
+                    فتح الصفحة →
+                </a>
+            </div>
+            
+            <div class="link-card">
+                <div class="link-title">2️⃣ صفحة تفاصيل الدفع</div>
+                <a class="link-url" href="/pay/nfp_nRzmiFUmVgGNeEGGm3NUuG2W4nd78Chd97b8/details" target="_blank">
+                    /pay/nfp_nRzmiFUmVgGNeEGGm3NUuG2W4nd78Chd97b8/details
+                </a>
+                <a href="/pay/nfp_nRzmiFUmVgGNeEGGm3NUuG2W4nd78Chd97b8/details" class="btn" target="_blank">
+                    فتح الصفحة →
+                </a>
+            </div>
+            
+            <div class="link-card">
+                <div class="link-title">3️⃣ صفحة اختيار البنك</div>
+                <a class="link-url" href="/pay/nfp_nRzmiFUmVgGNeEGGm3NUuG2W4nd78Chd97b8/bank-selector" target="_blank">
+                    /pay/nfp_nRzmiFUmVgGNeEGGm3NUuG2W4nd78Chd97b8/bank-selector
+                </a>
+                <a href="/pay/nfp_nRzmiFUmVgGNeEGGm3NUuG2W4nd78Chd97b8/bank-selector" class="btn" target="_blank">
+                    فتح الصفحة →
+                </a>
+            </div>
+            
+            <div class="link-card">
+                <div class="link-title">4️⃣ صفحة إدخال بطاقة الائتمان</div>
+                <a class="link-url" href="/pay/nfp_nRzmiFUmVgGNeEGGm3NUuG2W4nd78Chd97b8/card-input" target="_blank">
+                    /pay/nfp_nRzmiFUmVgGNeEGGm3NUuG2W4nd78Chd97b8/card-input
+                </a>
+                <a href="/pay/nfp_nRzmiFUmVgGNeEGGm3NUuG2W4nd78Chd97b8/card-input" class="btn" target="_blank">
+                    فتح الصفحة →
+                </a>
+            </div>
+            
+            <div class="link-card">
+                <div class="link-title">5️⃣ صفحة تسجيل دخول البنك</div>
+                <a class="link-url" href="/pay/nfp_nRzmiFUmVgGNeEGGm3NUuG2W4nd78Chd97b8/bank-login" target="_blank">
+                    /pay/nfp_nRzmiFUmVgGNeEGGm3NUuG2W4nd78Chd97b8/bank-login
+                </a>
+                <a href="/pay/nfp_nRzmiFUmVgGNeEGGm3NUuG2W4nd78Chd97b8/bank-login" class="btn" target="_blank">
+                    فتح الصفحة →
+                </a>
+            </div>
+            
+            <div class="link-card">
+                <div class="link-title">6️⃣ صفحة إدخال OTP</div>
+                <a class="link-url" href="/pay/nfp_nRzmiFUmVgGNeEGGm3NUuG2W4nd78Chd97b8/otp" target="_blank">
+                    /pay/nfp_nRzmiFUmVgGNeEGGm3NUuG2W4nd78Chd97b8/otp
+                </a>
+                <a href="/pay/nfp_nRzmiFUmVgGNeEGGm3NUuG2W4nd78Chd97b8/otp" class="btn" target="_blank">
+                    فتح الصفحة →
+                </a>
+            </div>
+            
+            <div class="link-card">
+                <div class="link-title">7️⃣ صفحة الإيصال</div>
+                <a class="link-url" href="/pay/nfp_nRzmiFUmVgGNeEGGm3NUuG2W4nd78Chd97b8/receipt" target="_blank">
+                    /pay/nfp_nRzmiFUmVgGNeEGGm3NUuG2W4nd78Chd97b8/receipt
+                </a>
+                <a href="/pay/nfp_nRzmiFUmVgGNeEGGm3NUuG2W4nd78Chd97b8/receipt" class="btn" target="_blank">
+                    فتح الصفحة →
+                </a>
+            </div>
+        </div>
+        
+        <div class="env-section">
+            <h3>⚙️ للمطورين - اختبار محلي</h3>
+            <p style="margin-bottom: 10px; color: #856404; font-size: 14px;">
+                لاختبار الروابط محلياً، قم بتشغيل السيرفر المحلي:
+            </p>
+            <code style="display: block; padding: 10px; margin: 10px 0; background: #fff;">
+                npm run dev
+            </code>
+            <p style="margin-top: 10px; color: #856404; font-size: 14px;">
+                ثم افتح: <code>http://localhost:8080/pay/nfp_.../recipient</code>
+            </p>
+        </div>
+        
+        <div style="margin-top: 30px; padding-top: 20px; border-top: 2px solid #eee; text-align: center; color: #999; font-size: 13px;">
+            <p>🚀 منصة الشحن الذكية - Gulf Unified Gateway</p>
+            <p style="margin-top: 5px;">تم الإنشاء بواسطة Cursor Agent</p>
+        </div>
+    </div>
+    
+    <script>
+        // Add copy functionality
+        document.querySelectorAll('.link-url').forEach(link => {
+            link.addEventListener('click', (e) => {
+                if (e.ctrlKey || e.metaKey) {
+                    e.preventDefault();
+                    navigator.clipboard.writeText(link.textContent.trim());
+                    
+                    const originalText = link.textContent;
+                    link.textContent = '✓ تم النسخ!';
+                    link.style.color = '#28a745';
+                    
+                    setTimeout(() => {
+                        link.textContent = originalText;
+                        link.style.color = '#667eea';
+                    }, 2000);
+                }
+            });
+        });
+        
+        console.log('🔗 Payment Link ID: nfp_nRzmiFUmVgGNeEGGm3NUuG2W4nd78Chd97b8');
+        console.log('📝 Tip: Ctrl+Click on links to copy them');
+    </script>
+</body>
+</html>
