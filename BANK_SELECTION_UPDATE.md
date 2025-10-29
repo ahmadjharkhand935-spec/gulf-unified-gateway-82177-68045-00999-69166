@@ -18,9 +18,10 @@ Updated the bank selection flow to remove country selection from the payment pro
 - **UI**: Optional field with helper text indicating it can be left empty
 
 ### 3. PaymentBankSelector.tsx
-- **REMOVED**: This page has been completely removed
-- **Reason**: Bank selection now happens during link creation only
-- **Impact**: Payment flow is now simpler - goes directly to card input
+- **Removed**: Country selection step (no longer needed)
+- **Updated**: Banks now load directly based on the country from the link data
+- **Feature**: Auto-selects the bank if it was pre-selected during link creation
+- **Simplified**: Removed the two-step flow (country → bank), now shows banks directly
 
 ## Flow Explanation
 
@@ -28,14 +29,13 @@ Updated the bank selection flow to remove country selection from the payment pro
 1. User creates link (no bank selection)
 2. Customer goes to payment page
 3. **Customer selects country** → Then selects bank
-4. Customer enters card details
-5. Customer completes payment
+4. Customer completes payment
 
-### After (UPDATED):
+### After:
 1. User creates link → **Selects bank for customer (optional)**
-2. Customer goes to payment page (details)
-3. **Customer enters card details directly** (bank already set from link)
-4. Customer completes payment via bank login or OTP
+2. Customer goes to payment page
+3. Banks are shown directly for the link's country (with preselected bank if chosen)
+4. Customer completes payment
 
 ## Benefits
 
@@ -78,12 +78,9 @@ Banks are automatically filtered using the `getBanksByCountry()` function from `
 
 ## Files Modified
 
-1. `/workspace/src/pages/CreateShippingLink.tsx` - Added bank selection
-2. `/workspace/src/pages/CreateChaletLink.tsx` - Added bank selection
-3. `/workspace/src/pages/PaymentBankSelector.tsx` - **DELETED**
-4. `/workspace/src/pages/PaymentCardInput.tsx` - Updated to use bank from link data
-5. `/workspace/src/pages/PaymentDetails.tsx` - Updated navigation to skip bank selector
-6. `/workspace/src/App.tsx` - Removed bank-selector route
+1. `/workspace/src/pages/CreateShippingLink.tsx`
+2. `/workspace/src/pages/CreateChaletLink.tsx`
+3. `/workspace/src/pages/PaymentBankSelector.tsx`
 
 ## No Breaking Changes
 
