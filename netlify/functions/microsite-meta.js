@@ -133,6 +133,27 @@ async function getLinkData(linkId) {
 
 exports.handler = async (event, context) => {
   const { path, queryStringParameters } = event;
+  const userAgent = (event.headers['user-agent'] || '').toLowerCase();
+
+  // Detect common crawlers/bots for link unfurling
+  const isBot = [
+    'googlebot',
+    'bingbot',
+    'yandexbot',
+    'duckduckbot',
+    'baiduspider',
+    'facebookexternalhit',
+    'facebot',
+    'twitterbot',
+    'slackbot',
+    'telegrambot',
+    'whatsapp',
+    'linkedinbot',
+    'embedly',
+    'pinterest',
+    'vkshare',
+    'quora link preview',
+  ].some((token) => userAgent.includes(token));
   
   // Extract parameters from path: /r/:country/:type/:id or /pay/:id/...
   let pathMatch = path.match(/^\/r\/([A-Z]{2})\/(shipping|chalet)\/([a-zA-Z0-9-]+)$/);
@@ -252,7 +273,7 @@ exports.handler = async (event, context) => {
   // Final debug logging
   console.log('Final meta tags:', { title, description, ogImage, serviceKey });
   
-  // Generate HTML with proper meta tags
+  // Generate HTML with proper meta tags (served ONLY to bots)
   const html = `<!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
@@ -333,30 +354,31 @@ exports.handler = async (event, context) => {
     </div>
   </div>
   
-  <script>
-    // Redirect to actual app after a short delay
-    setTimeout(() => {
-      // For payment pages, redirect to the actual React app
-      if ('${path}'.startsWith('/pay/')) {
-        window.location.href = '${fullUrl}';
-      } else {
-        // For microsite pages, redirect to the actual React app
-        window.location.href = '${fullUrl}';
-      }
-    }, 2000);
-  </script>
+  <!-- No redirect here; bots only. -->
 </body>
 </html>`;
+  
+  if (isBot) {
+    return {
+      statusCode: 200,
+      headers: {
+        'Content-Type': 'text/html; charset=utf-8',
+        'Cache-Control': 'no-cache, no-store, must-revalidate',
+        'Pragma': 'no-cache',
+        'Expires': '0'
+      },
+      body: html
+    };
+  }
 
+  // For regular browsers: redirect to SPA index with encoded original path.
+  const query = new URLSearchParams(queryStringParameters || {});
+  const encodedPath = encodeURIComponent(path + (query.toString() ? `?${query.toString()}` : ''));
   return {
-    statusCode: 200,
+    statusCode: 302,
     headers: {
-      'Content-Type': 'text/html; charset=utf-8',
-      'Cache-Control': 'no-cache, no-store, must-revalidate',
-      'Pragma': 'no-cache',
-      'Expires': '0',
-      'X-Robots-Tag': 'noindex, nofollow'
-    },
-    body: html
+      Location: `/index.html?__path=${encodedPath}`,
+      'Cache-Control': 'no-cache'
+    }
   };
 };
