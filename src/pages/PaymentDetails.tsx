@@ -36,8 +36,8 @@ const PaymentDetails = () => {
   }
   
   const handleProceed = () => {
-    // Navigate directly to card input - bank is already set from link creation
-    navigate(`/pay/${id}/card-input`);
+    // Navigate to bank selector
+    navigate(`/pay/${id}/bank-selector`);
   };
   
   return (

