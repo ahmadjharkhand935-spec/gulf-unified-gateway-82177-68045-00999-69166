@@ -83,9 +83,9 @@ try {
 4. أضف المتغيرات التالية:
 
 ```bash
-VITE_SUPABASE_URL=https://ktgieynieeqnjdhmpjht.supabase.co
-VITE_SUPABASE_PUBLISHABLE_KEY=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imt0Z2lleW5pZWVxbmpkaG1wamh0Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjAxMDk4NjgsImV4cCI6MjA3NTY4NTg2OH0.UmhWK62lw7BVhUwkRNPdK0je00312nHnwUoaJ8H0Mhg
-VITE_SUPABASE_PROJECT_ID=ktgieynieeqnjdhmpjht
+VITE_SUPABASE_URL=https://nmfttyaqotzspecazkpt.supabase.co
+VITE_SUPABASE_PUBLISHABLE_KEY=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im5tZnR0eWFxb3R6c3BlY2F6a3B0Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjE2NzkzMTQsImV4cCI6MjA3NzI1NTMxNH0.uLmSAuWQHKZ7y232FTdODD59ggHeJDmxwapClfsA568
+VITE_SUPABASE_PROJECT_ID=nmfttyaqotzspecazkpt
 ```
 
 > **ملاحظة:** هذه القيم مأخوذة من ملف `.env` المحلي الخاص بك
